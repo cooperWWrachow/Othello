@@ -1,7 +1,7 @@
 '''
  Name: Cooper Rachow
  ID: 10392674
- Date: 10/21/24
+ Date: 11/11/24
  Assignment: Othello Program
  Description: The program below implements the game of Othello. It includes a human vs human mode and a human vs AI mode.
     Within the AI mode, the minimax recursive algorithm is implemented from the AI's perspective. It also offers alpha-beta 
@@ -166,7 +166,7 @@ def miniMax(board: list[int], depth: int, maximizingPlayer: bool, player: str, m
             # Convert index values to corresponding letter values
             coord_sequence = [indexToCoordinate(move) for move in move_sequence]
             print(f"Move sequence: {coord_sequence}, Heuristic: {heuristic_value}")
-            printBoard(board)
+            # printBoard(board)
         # Increment the total states examined 
         total_states_examined += 1
         # -1 for best move is because no move is associated with the base case. Just the heuristic value
@@ -281,7 +281,9 @@ while hasValidMove(board, BLACK) or hasValidMove(board, WHITE):
 
             end = time.time()
             # Print debug information at the end
+            print("=============================================")
             print(f"Total game states examined: {total_examined}. Elapsed time: {round(end-start, 5)}")
+            # Apply new move to current board
             makeMove(board, move, aiColor)
         # Applies to humans
         else:
