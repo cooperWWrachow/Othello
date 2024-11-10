@@ -1,3 +1,17 @@
+'''
+ Name: Cooper Rachow
+ ID: 10392674
+ Date: 10/21/24
+ Assignment: Othello Program
+ Description: The program below implements the game of Othello. It includes a human vs human mode and a human vs AI mode.
+    Within the AI mode, the minimax recursive algorithm is implemented from the AI's perspective. It also offers alpha-beta 
+    pruning if enabled by the human. All gameplay exists in the terminal.
+'''
+
+# Source (time): https://stackoverflow.com/questions/7370801/how-do-i-measure-elapsed-time-in-python
+
+import time
+
 EMPTY = '-'
 BLACK = '@'
 WHITE = 'O'
@@ -152,6 +166,7 @@ def miniMax(board: list[int], depth: int, maximizingPlayer: bool, player: str, m
             # Convert index values to corresponding letter values
             coord_sequence = [indexToCoordinate(move) for move in move_sequence]
             print(f"Move sequence: {coord_sequence}, Heuristic: {heuristic_value}")
+            printBoard(board)
         # Increment the total states examined 
         total_states_examined += 1
         # -1 for best move is because no move is associated with the base case. Just the heuristic value
@@ -175,15 +190,20 @@ def miniMax(board: list[int], depth: int, maximizingPlayer: bool, player: str, m
             eval, _, total_states_examined = miniMax(temp_board, depth - 1, False, opponent_player, move_sequence + [move], debug, pruning, alpha, beta, total_states_examined)
             # Update maxEval and best move if the new eval is greater than the current maxEval
             if eval > maxEval:
+                # Update maxEval and best_move for tracking 
                 maxEval, best_move = eval, move
             if pruning:
+                # Get oriinal alpha for comparison with possibly new alpha
                 old_alpha = alpha
                 alpha = max(alpha, eval)
+                # If alpha changes then print specific visual values
                 if debug and alpha != old_alpha:
                     print(f"Depth {depth}, Move {indexToCoordinate(move)}: Old Alpha of {old_alpha} updated to New Alpha {alpha}")
+                # Prune (break loop) for specific node if necessary
                 if beta <= alpha:
+                    # Print that pruning has occured at specif visual values
                     if debug:
-                        print(f"Depth {depth}, Move {indexToCoordinate(move)}: Pruning occurs (beta <= alpha)")
+                        print(f"Depth {depth}, Move {indexToCoordinate(move)}: Pruning occurs (beta: {beta} <= alpha: {alpha})")
                     break
         return maxEval, best_move, total_states_examined
     # Minimizing player's turn: opponent in this case
@@ -196,15 +216,20 @@ def miniMax(board: list[int], depth: int, maximizingPlayer: bool, player: str, m
             eval, _, total_states_examined = miniMax(temp_board, depth - 1, True, opponent_player, move_sequence + [move], debug, pruning, alpha, beta, total_states_examined)
             # Update minEval and best move if the new eval is less than the current minEval
             if eval < minEval:
+                # Update minEval and best_move for tracking
                 minEval, best_move = eval, move
             if pruning:
+                # Get oriinal beta for comparison with possibly new beta
                 old_beta = beta
                 beta = min(beta, eval)
+                # If beta changes then print specific visual values
                 if debug and beta != old_beta:
                     print(f"Depth {depth}, Move {indexToCoordinate(move)}: Old Beta of {old_beta} updated to New Beta {beta}")
+                # Prune (break loop) for specific node if necessary
                 if beta <= alpha:
+                    # Print that pruning has occured at specif visual values
                     if debug:
-                        print(f"Depth {depth}, Move {indexToCoordinate(move)}: Pruning occurs (beta <= alpha)")
+                        print(f"Depth {depth}, Move {indexToCoordinate(move)}: Pruning occurs (beta: {beta} <= alpha: {alpha})")
                     break
         return minEval, best_move, total_states_examined
 
@@ -250,10 +275,13 @@ while hasValidMove(board, BLACK) or hasValidMove(board, WHITE):
             debug = True if debug_choice == '1' else False
             pruning = True if prune_choice == '1' else False
 
+            start = time.time()
             # Retrieve the best move and total number of state sequences from minimax function
             _, move, total_examined = miniMax(board, depth_choice, True, aiColor, [], debug, pruning)
+
+            end = time.time()
             # Print debug information at the end
-            print(f"Total game states examined: {total_examined}")
+            print(f"Total game states examined: {total_examined}. Elapsed time: {round(end-start, 5)}")
             makeMove(board, move, aiColor)
         # Applies to humans
         else:
